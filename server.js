@@ -28,6 +28,9 @@ const anthropic = new Anthropic({
 const MODEL = 'claude-opus-4-6';
 const MAX_TOKENS = 4096;
 
+// Increase server timeout for long Claude API calls
+const SERVER_TIMEOUT = 120000; // 2 minutes
+
 // ============================================================
 // Health endpoint
 // ============================================================
@@ -132,9 +135,11 @@ app.post('/api/chat', async (req, res) => {
 
 const PORT = process.env.PORT || 3849;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`THE LUTHIER cloud backend running on port ${PORT}`);
   console.log(`Model: ${MODEL}`);
   console.log(`Tools: ${TOOLS.length}`);
   console.log(`API Key: ${process.env.ANTHROPIC_API_KEY ? 'configured' : 'MISSING!'}`);
 });
+server.timeout = SERVER_TIMEOUT;
+server.keepAliveTimeout = SERVER_TIMEOUT;
